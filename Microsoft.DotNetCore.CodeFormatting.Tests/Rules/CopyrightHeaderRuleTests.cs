@@ -10,15 +10,17 @@ namespace Microsoft.DotNetCore.CodeFormatting.Tests
 {
     public sealed class CopyrightHeaderRuleTests : SyntaxRuleTestBase
     {
+        private readonly Options _options = new Options();
+
         internal override ISyntaxFormattingRule Rule
         {
-            get { return new Rules.CopyrightHeaderRule(); }
+            get { return new Rules.CopyrightHeaderRule(_options); }
         }
 
         [Fact]
         public void CSharpSimple()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("test");
+            _options.CopyrightHeader = ImmutableArray.Create("test");
             var source = @"
 class C
 {
@@ -35,7 +37,7 @@ class C
         [Fact]
         public void CSharpSimpleMultiline()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("test1", "test2");
+            _options.CopyrightHeader = ImmutableArray.Create("test1", "test2");
             var source = @"
 class C
 {
@@ -53,7 +55,7 @@ class C
         [Fact]
         public void CSharpPreserveExisting()
         {
-            Options.CopyrightHeader= ImmutableArray.Create("test");
+            _options.CopyrightHeader= ImmutableArray.Create("test");
             var source = @"// test
 
 class C
@@ -71,7 +73,7 @@ class C
         [Fact]
         public void CSharpPreserveExistingMultiline()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("test1", "test2");
+            _options.CopyrightHeader = ImmutableArray.Create("test1", "test2");
             var source = @"// test1
 // test2
 
@@ -91,7 +93,7 @@ class C
         [Fact]
         public void CSharpPreserveExistingWithCommentMultiline()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("test1", "test2");
+            _options.CopyrightHeader = ImmutableArray.Create("test1", "test2");
             var source = @"// test1
 // test2
 
@@ -125,7 +127,7 @@ class C
         [Fact]
         public void CSharpDontDoubleComment()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("// test");
+            _options.CopyrightHeader = ImmutableArray.Create("// test");
             var source = @"
 class C
 {
@@ -142,7 +144,7 @@ class C
         [Fact]
         public void CSharpRemoveOlder()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("test");
+            _options.CopyrightHeader = ImmutableArray.Create("test");
             var source = @"// copyright
 
 class C
@@ -160,7 +162,7 @@ class C
         [Fact]
         public void CSharpHeaderBeginsWithTargetHeader()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("// test", "// test2");
+            _options.CopyrightHeader = ImmutableArray.Create("// test", "// test2");
             var source = @"// test
 // test2
 // file summary
@@ -182,7 +184,7 @@ class C
         [Fact]
         public void VisualBasicSimple()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("test");
+            _options.CopyrightHeader = ImmutableArray.Create("test");
             var source = @"
 Public Class C
 End Class";
@@ -198,7 +200,7 @@ End Class";
         [Fact]
         public void VisualBasicNormalizeComment()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("// test");
+            _options.CopyrightHeader = ImmutableArray.Create("// test");
             var source = @"
 Public Class C
 End Class";
@@ -214,7 +216,7 @@ End Class";
         [Fact]
         public void VisualBasicPreserveExisting()
         {
-            Options.CopyrightHeader = ImmutableArray.Create("// test");
+            _options.CopyrightHeader = ImmutableArray.Create("// test");
             var source = @"' test
 
 Public Class C

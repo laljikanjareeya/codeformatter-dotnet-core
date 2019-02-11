@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using System.Composition;
 
 namespace Microsoft.DotNetCore.CodeFormatting.Rules
 {
@@ -15,6 +16,14 @@ namespace Microsoft.DotNetCore.CodeFormatting.Rules
     {
         internal const string Name = FormattingDefaults.CopyrightRuleName;
         internal const string Description = "Insert the copyright header into every file";
+        private readonly Options _options;
+
+        [ImportingConstructor]
+        public CopyrightHeaderRule([Import] Options options)
+        {
+            _options = options;
+        }
+
 
         private abstract class CommonRule
         {
@@ -167,10 +176,10 @@ namespace Microsoft.DotNetCore.CodeFormatting.Rules
 
         private ImmutableArray<string> GetHeader()
         {
-            if (_cachedHeaderSource != Options.CopyrightHeader)
+            if (_cachedHeaderSource != _options.CopyrightHeader)
             {
-                _cachedHeaderSource = Options.CopyrightHeader;
-                _cachedHeader = Options.CopyrightHeader.Select(GetCommentText).ToImmutableArray();
+                _cachedHeaderSource = _options.CopyrightHeader;
+                _cachedHeader = _options.CopyrightHeader.Select(GetCommentText).ToImmutableArray();
             }
 
             return _cachedHeader;

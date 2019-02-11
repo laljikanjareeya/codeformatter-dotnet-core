@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,10 +19,17 @@ namespace Microsoft.DotNetCore.CodeFormatting.Rules
     {
         internal const string Name = "CustomCopyright";
         internal const string Description = "Remove any custom copyright header from the file";
-
+        private readonly Options _options;
         private static string RulerMarker { get; set; }
         private static string StartMarker { get; set; }
         private static string EndMarker { get; set; }
+
+        [ImportingConstructor]
+        public HasNoCustomCopyrightHeaderFormattingRule([Import] Options options)
+        {
+            _options = options;
+        }
+
 
         public SyntaxNode Process(SyntaxNode syntaxNode, string languageName)
         {
@@ -119,14 +127,14 @@ namespace Microsoft.DotNetCore.CodeFormatting.Rules
 
             if (!File.Exists(filePath))
             {
-                Options.FormatLogger.WriteErrorLine("The specified CopyrightHeader.md file was not found.");
+                _options.FormatLogger.WriteErrorLine("The specified CopyrightHeader.md file was not found.");
                 return false;
             }
 
             var lines = File.ReadAllLines(filePath).Where(l => !l.StartsWith("##") && !l.Equals("")).ToArray();
             if (lines.Count() != 3)
             {
-                Options.FormatLogger.WriteErrorLine("There should be exactly 3 lines in CopyrightHeader.md.");
+                _options.FormatLogger.WriteErrorLine("There should be exactly 3 lines in CopyrightHeader.md.");
                 return false;
             }
 

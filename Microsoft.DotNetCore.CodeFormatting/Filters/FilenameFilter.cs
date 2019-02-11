@@ -8,9 +8,16 @@ namespace Microsoft.DotNetCore.CodeFormatting.Filters
     [Export(typeof(IFormattingFilter))]
     internal sealed class FilenameFilter : IFormattingFilter
     {
+        private readonly Options _options;
+        [ImportingConstructor]
+        public FilenameFilter(Options options)
+        {
+            _options = options;
+        }
+
         public bool ShouldBeProcessed(Document document)
         {
-            var fileNames = Options.FileNames;
+            var fileNames = _options.FileNames;
             if (fileNames.IsDefaultOrEmpty)
             {
                 return true;
