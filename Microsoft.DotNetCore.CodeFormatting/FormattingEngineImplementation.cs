@@ -23,7 +23,7 @@ namespace Microsoft.DotNetCore.CodeFormatting
         internal const string TablePreprocessorSymbolName = "DOTNET_FORMATTER";
 
         private readonly IEnumerable<IFormattingFilter> _filters;
-
+        private readonly Options _options;
         private readonly IEnumerable<Lazy<ISyntaxFormattingRule, RuleMetadata>> _syntaxRules;
         private readonly IEnumerable<Lazy<ILocalSemanticFormattingRule, RuleMetadata>> _localSemanticRules;
         private readonly IEnumerable<Lazy<IGlobalSemanticFormattingRule, RuleMetadata>> _globalSemanticRules;
@@ -34,26 +34,26 @@ namespace Microsoft.DotNetCore.CodeFormatting
 
         public ImmutableArray<string> CopyrightHeader
         {
-            get { return Options.CopyrightHeader; }
-            set { Options.CopyrightHeader = value; }
+            get { return _options.CopyrightHeader; }
+            set { _options.CopyrightHeader = value; }
         }
 
         public ImmutableArray<string[]> PreprocessorConfigurations
         {
-            get { return Options.PreprocessorConfigurations; }
-            set { Options.PreprocessorConfigurations = value; }
+            get { return _options.PreprocessorConfigurations; }
+            set { _options.PreprocessorConfigurations = value; }
         }
 
         public ImmutableArray<string> FileNames
         {
-            get { return Options.FileNames; }
-            set { Options.FileNames = value; }
+            get { return _options.FileNames; }
+            set { _options.FileNames = value; }
         }
 
         public IFormatLogger FormatLogger
         {
-            get { return Options.FormatLogger; }
-            set { Options.FormatLogger = value; }
+            get { return _options.FormatLogger; }
+            set { _options.FormatLogger = value; }
         }
 
         public bool AllowTables
@@ -82,11 +82,13 @@ namespace Microsoft.DotNetCore.CodeFormatting
 
         [ImportingConstructor]
         public FormattingEngineImplementation(
+            [Import] Options options,
             [ImportMany] IEnumerable<IFormattingFilter> filters,
             [ImportMany] IEnumerable<Lazy<ISyntaxFormattingRule, RuleMetadata>> syntaxRules,
             [ImportMany] IEnumerable<Lazy<ILocalSemanticFormattingRule, RuleMetadata>> localSemanticRules,
             [ImportMany] IEnumerable<Lazy<IGlobalSemanticFormattingRule, RuleMetadata>> globalSemanticRules)
         {
+            _options = options;
             _filters = filters;
             _syntaxRules = syntaxRules;
             _localSemanticRules = localSemanticRules;

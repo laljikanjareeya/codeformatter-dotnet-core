@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.VisualBasic;
+using System.Composition;
 
 namespace Microsoft.DotNetCore.CodeFormatting.Rules
 {
@@ -20,6 +21,14 @@ namespace Microsoft.DotNetCore.CodeFormatting.Rules
     {
         internal const string Name = "FormatDocument";
         internal const string Description = "Run the language specific formatter on every document";
+        private readonly Options _options;
+
+        [ImportingConstructor]
+        public FormatDocumentFormattingRule([Import] Options options)
+        {
+            _options = options;
+        }
+
 
         public bool SupportsLanguage(string languageName)
         {
@@ -31,11 +40,11 @@ namespace Microsoft.DotNetCore.CodeFormatting.Rules
         public async Task<SyntaxNode> ProcessAsync(Document document, SyntaxNode syntaxNode, CancellationToken cancellationToken)
         {
             document = await Formatter.FormatAsync(document, cancellationToken: cancellationToken);
-            if (!Options.PreprocessorConfigurations.IsDefaultOrEmpty)
+            if (!_options.PreprocessorConfigurations.IsDefaultOrEmpty)
             {
                 var project = document.Project;
                 var parseOptions = document.Project.ParseOptions;
-                foreach (var configuration in Options.PreprocessorConfigurations)
+                foreach (var configuration in _options.PreprocessorConfigurations)
                 {
                     var list = new List<string>(configuration.Length + 1);
                     list.AddRange(configuration);
